@@ -13,7 +13,7 @@ public class Curvesframe : Form {
 private const int xframe = 800; //UI X's size
 	private const int yframe = 1000;//UI Y's size
 	private const int pensize = 1;
-	private const int cRadius =1;
+	private const int cRadius =2;
 	private double i;
 	private const double refresh_rate = 30.0;//Hertz: How many times per second the display area is repainted.
 	private const double ball_refresh_rate=50.0;
@@ -115,17 +115,22 @@ private const int xframe = 800; //UI X's size
 
 		polarCurves = new Curves_algorithms();
 		distance_1tic = linear_velocity/spiral_rate;
-		mathematical_distance_traveled_in_one_tic = distance_1tic;
-		xMath=(float) (System.Math.Sin(curvesConstant*theta)*System.Math.Cos(theta));
-		yMath=(float) (System.Math.Sin(curvesConstant*theta)*System.Math.Sin(theta));
+		mathematical_distance_traveled_in_one_tic = distance_1tic/mathToCRatio;
+		xMath=(float) (System.Math.Sin(curvesConstant*theta)*System.Math.Cos(theta)*2);
+		yMath=(float) (System.Math.Sin(curvesConstant*theta)*System.Math.Sin(theta)*2);
+		//xMath=(float) (System.Math.Cos(curvesConstant*theta)*System.Math.Cos(theta));
+		//yMath=(float) (System.Math.Cos(curvesConstant*theta)*System.Math.Sin(theta));
+		//xMath= (float) (System.Math.Sin(theta)* System.Math.Cos(theta));
+		//yMath= (float) (System.Math.Sin(theta)* System.Math.Sin(theta));
 		System.Console.WriteLine("HEYYYY "+ xMath+" HERE " + yMath);
+		Start_graphic_clock(refresh_rate);
 	}
 	// protected void startBP(Object sender, EventArgs events) {
 	// System.Console.WriteLine("New Game");
 	// // speedD=40;
 	// // resetPosition();
 	// // pointCounter=0;
-	 // Start_graphic_clock(refresh_rate);
+	 // 
 	 // spiral_clock.Enabled = true;
 	// // Start_motion_ball_clock(ball_refresh_rate);
 	// Invalidate();
@@ -154,7 +159,7 @@ private const int xframe = 800; //UI X's size
    }
     protected void Update_the_graphic_area(System.Object sender, ElapsedEventArgs even)
     {   System.Console.WriteLine("Refreshing Screen");
-		
+			  pointer_to_graphic_surface.FillEllipse(Brushes.Red,(cxMath-cRadius),(cyMath -cRadius),(2* cRadius),(2 *cRadius));
 		Invalidate();
    }
     protected void Update_the_position_of_the_spiral(System.Object sender,ElapsedEventArgs an_event)
@@ -169,8 +174,9 @@ private const int xframe = 800; //UI X's size
       // y_scaled_double = scale_factor * y;
 	  cxMath = xMathTocX(xMath);													// Convert math x to C# x
 	  cyMath = yMathTocY(yMath);	
-	  pointer_to_graphic_surface.FillEllipse(Brushes.Red,(cxMath-cRadius),(cyMath -cRadius),(2* cRadius),(2 *cRadius));
+
 	  System.Console.WriteLine("HEYYYY "+ xMath+" HERE " + yMath);
+	  System.Console.WriteLine("BLAH "+ cxMath+" HERE " + cyMath);
 	  i++;
      }//End of method Update_the_position_of_the_spiral
    protected void Manage_spiral_clock(Object sender, EventArgs events)
