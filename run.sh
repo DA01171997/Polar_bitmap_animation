@@ -12,17 +12,20 @@ rm *.exe
 echo "***View the list of source files.***"
 ls -l
 
-echo "***Compile TESTframe.cs to create the file: TESTframe.dll.***"
-mcs -target:library -r:System.Windows.Forms.dll -r:System.Drawing.dll -out:TESTframe.dll TESTframe.cs
+echo "***Compile CurvesAlgorithm.cs to create the file: CurvesAlgorithm..dll.***"
+mcs -target:library CurvesAlgorithm.cs -out:CurvesAlgorithm.dll
 
-echo "***Compile TESTmain.cs and link previously created dll file to create an executable file.***"
-mcs -r:System.Windows.Forms.dll -r:System.Drawing.dll -r:TESTframe.dll -out:TEST.exe TESTmain.cs
+echo "***Compile Curvesframe.cs to create the file: Curvesframe.dll.***"
+mcs -target:library Curvesframe.cs -r:System.Windows.Forms.dll -r:System.Drawing.dll -r:CurvesAlgorithm.dll -out:Curvesframe.dll
+
+echo "***Compile Curvesmain.cs and link previously created dll file to create an executable file.***"
+mcs -target:exe Curvesmain.cs -r:System.Windows.Forms.dll -r:System.Drawing.dll -r:Curvesframe.dll -out:Curves.exe
 
 echo "***View the list of files in the current folder.***"
 ls -l
 
-echo "***Run TEST program.***"
-./TEST.exe
+echo "***Run Curves program.***"
+./Curves.exe
 
 echo "***Remove dll files.***"
 rm *.dll
