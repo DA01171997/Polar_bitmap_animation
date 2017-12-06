@@ -67,7 +67,7 @@ private const int xframe = 800; //UI X's size
 	private double distance_1tic;
 	private double mathematical_distance_traveled_in_one_tic;
 	private float curvesConstant =4.0f;
-	
+	private float bigPolarfactor=7;
 	
 	public Curvesframe () {
         // Initialize the UI
@@ -116,8 +116,8 @@ private const int xframe = 800; //UI X's size
 		polarCurves = new Curves_algorithms();
 		distance_1tic = linear_velocity/spiral_rate;
 		mathematical_distance_traveled_in_one_tic = distance_1tic/mathToCRatio;
-		xMath=(float) (System.Math.Sin(curvesConstant*theta)*System.Math.Cos(theta)*2);
-		yMath=(float) (System.Math.Sin(curvesConstant*theta)*System.Math.Sin(theta)*2);
+		xMath=(float) (System.Math.Sin(curvesConstant*theta)*System.Math.Cos(theta)*bigPolarfactor);
+		yMath=(float) (System.Math.Sin(curvesConstant*theta)*System.Math.Sin(theta)*bigPolarfactor);
 		//xMath=(float) (System.Math.Cos(curvesConstant*theta)*System.Math.Cos(theta));
 		//yMath=(float) (System.Math.Cos(curvesConstant*theta)*System.Math.Sin(theta));
 		//xMath= (float) (System.Math.Sin(theta)* System.Math.Cos(theta));
@@ -165,7 +165,7 @@ private const int xframe = 800; //UI X's size
     protected void Update_the_position_of_the_spiral(System.Object sender,ElapsedEventArgs an_event)
      {//Call a method to compute the next pair of Cartesian coordinates for the moving particle tracing the path of the spiral.
 		
-		polarCurves.get_next_coordinates(curvesConstant, mathematical_distance_traveled_in_one_tic,
+		polarCurves.get_next_coordinates(curvesConstant, mathematical_distance_traveled_in_one_tic, bigPolarfactor,
                                       ref theta,
                                       out xMath,
                                       out yMath);

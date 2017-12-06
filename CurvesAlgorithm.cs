@@ -15,13 +15,13 @@ public class Curves_algorithms
 	private double derivativeY;
     //Note that all values in the method below are mathematical units.  None of the values have been scaled for output by a computer.
     public void get_next_coordinates(float curvesConstant,          //Constant 'a' in the equation r = a+b*t
-                                     double mathematical_distance_traveled_in_one_tic,           //Constant 'b' in the equation r = a+b*       //The distance the brush will move in one tic of the spiral clock.
+                                     double mathematical_distance_traveled_in_one_tic, float bigPolarfactor,       //Constant 'b' in the equation r = a+b*       //The distance the brush will move in one tic of the spiral clock.
                                      ref double theta,                   //The variable 't' in the equation r = a+b*t
                                      out float xMath,               //The next x coordinate of the spiral
                                      out float yMath)               //The next y coordinate of the spiral
        {	
-	   derivativeX = (double)(System.Math.Cos(theta)*System.Math.Cos(curvesConstant*theta)*curvesConstant *7 - System.Math.Sin(theta) * System.Math.Sin(curvesConstant*theta)*7);
-		derivativeY = (double)(System.Math.Cos(theta)*System.Math.Sin(curvesConstant*theta)*7 + curvesConstant*System.Math.Sin(theta)*System.Math.Cos(curvesConstant*theta)*7);   
+	   derivativeX = (double)(System.Math.Cos(theta)*System.Math.Cos(curvesConstant*theta)*curvesConstant *bigPolarfactor - System.Math.Sin(theta) * System.Math.Sin(curvesConstant*theta)*bigPolarfactor);
+		derivativeY = (double)(System.Math.Cos(theta)*System.Math.Sin(curvesConstant*theta)*bigPolarfactor + curvesConstant*System.Math.Sin(theta)*System.Math.Cos(curvesConstant*theta)*bigPolarfactor);   
 		//erivativeX = (double)(-2*System.Math.Cos(theta)*System.Math.Sin(curvesConstant*theta) - System.Math.Sin(theta)*System.Math.Cos(curvesConstant*theta));
 		//derivativeY = (double)(System.Math.Cos(theta)*System.Math.Cos(curvesConstant*theta) - curvesConstant*System.Math.Sin(theta)*System.Math.Sin(curvesConstant*theta));
 		// derivativeX = (double) (System.Math.Cos(theta) * System.Math.Cos(theta) - System.Math.Sin(theta) * System.Math.Sin(theta));
@@ -32,8 +32,8 @@ public class Curves_algorithms
 		System.Console.WriteLine(" Theta Old: " + theta);
         theta = theta + mathematical_distance_traveled_in_one_tic/magnitude_of_tangent_vector;
 		System.Console.WriteLine(" Theta New: " + theta);
-		xMath=(float) (System.Math.Sin(curvesConstant*theta)*System.Math.Cos(theta)*7);
-		yMath=(float) (System.Math.Sin(curvesConstant*theta)*System.Math.Sin(theta)*7);
+		xMath=(float) (System.Math.Sin(curvesConstant*theta)*System.Math.Cos(theta)*bigPolarfactor);
+		yMath=(float) (System.Math.Sin(curvesConstant*theta)*System.Math.Sin(theta)*bigPolarfactor);
 		//xMath=(float) (System.Math.Cos(curvesConstant*theta)*System.Math.Cos(theta));
 		//yMath=(float) (System.Math.Cos(curvesConstant*theta)*System.Math.Sin(theta));
 		//xMath= (float) (System.Math.Sin(theta)* System.Math.Cos(theta));
