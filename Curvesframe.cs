@@ -22,7 +22,7 @@ private const int xframe = 800; //UI X's size
 	private const double restart_clock_rate=1.0;
 	private const double destroy_clock_rate=50.0;
 	private const double time_converter=1000.0; //Timer Interval is in milisecond. This is 1 second
-	private const double linear_velocity = 44.5;
+	private const double linear_velocity = 44.5; // speed pixel per second
 	private const double spiral_rate = 50.0;
 	private Pen ballpointpen;
 	private Pen ballpointpenDash;
@@ -34,7 +34,6 @@ private const int xframe = 800; //UI X's size
 	private Point startBL = new Point(590,850);	
 	private Point exitBL = new Point(650,850);		
 	private Size buttonSize = new Size(60,50);
-	private float speedD = 100;		//initial speed 40pix sec
 	private float mathToCRatio=50;
 	private float xMath=0;
 	private float yMath=0;
@@ -235,7 +234,7 @@ private const int xframe = 800; //UI X's size
 		curves.DrawImage(pointer_to_bitmap_in_memory,0,0,xframe,yframe);
 		//Draw String
 		curves.DrawString(myName,fontStyle, drawBrush, 50,50);
-		curves.DrawString(ballspeedmessage + speedD + " pix/sec", fontStyle, drawBrush, 275,810);
+		curves.DrawString(ballspeedmessage + linear_velocity + " pix/sec", fontStyle, drawBrush, 275,810);
 		curves.DrawString(cCordMessage+"(" + cxMath + "," + cyMath + ")", fontStyle, drawBrush, 275, 850);
 		curves.DrawString(degreemessage + theta, fontStyle, drawBrush, 275,890);
 		//Exit message when curves if finished 
