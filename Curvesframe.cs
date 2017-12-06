@@ -13,7 +13,7 @@ public class Curvesframe : Form {
 private const int xframe = 800; //UI X's size
 	private const int yframe = 1000;//UI Y's size
 	private const int pensize = 1;
-	private const int cRadius =10;
+	private const int cRadius =1;
 	private double i;
 	private const double refresh_rate = 30.0;//Hertz: How many times per second the display area is repainted.
 	private const double ball_refresh_rate=50.0;
@@ -63,6 +63,10 @@ private const int xframe = 800; //UI X's size
 	private System.Drawing.Bitmap pointer_to_bitmap_in_memory = new Bitmap(xframe,yframe,System.Drawing.Imaging.PixelFormat.Format24bppRgb);
 	
 	Curves_algorithms polarCurves;
+	private double theta=0; 
+	private double distance_1tic;
+	private double mathematical_distance_traveled_in_one_tic;
+	private float curvesConstant =4.0f;
 	
 	
 	public Curvesframe () {
@@ -110,8 +114,11 @@ private const int xframe = 800; //UI X's size
         spiral_clock.Elapsed += new ElapsedEventHandler(Update_the_position_of_the_spiral);
 
 		polarCurves = new Curves_algorithms();
-	
-	
+		distance_1tic = linear_velocity/spiral_rate;
+		mathematical_distance_traveled_in_one_tic = distance_1tic;
+		xMath=(float) (System.Math.Sin(curvesConstant*theta)*System.Math.Cos(theta));
+		yMath=(float) (System.Math.Sin(curvesConstant*theta)*System.Math.Sin(theta));
+		System.Console.WriteLine("HEYYYY "+ xMath+" HERE " + yMath);
 	}
 	// protected void startBP(Object sender, EventArgs events) {
 	// System.Console.WriteLine("New Game");
@@ -152,21 +159,18 @@ private const int xframe = 800; //UI X's size
    }
     protected void Update_the_position_of_the_spiral(System.Object sender,ElapsedEventArgs an_event)
      {//Call a method to compute the next pair of Cartesian coordinates for the moving particle tracing the path of the spiral.
-		pointer_to_graphic_surface.FillEllipse(Brushes.Red,
-                                                  (float)0,
-                                                  (float)(xframe/2+i*mathToCRatio),  //There is a subtraction here because the y-axis is upside down.
-                                                  cRadius,
-                                                  cRadius);	
-      // archimedes.get_next_coordinates(initial_radius,
-                                      // b_coefficient,
-                                      // mathematical_distance_traveled_in_one_tic,
-                                      // ref t,
-                                      // out x,
-                                      // out y);
+		
+		polarCurves.get_next_coordinates(curvesConstant, mathematical_distance_traveled_in_one_tic,
+                                      ref theta,
+                                      out xMath,
+                                      out yMath);
 
-      // x_scaled_double = scale_factor * x;
+      //xMath=;
       // y_scaled_double = scale_factor * y;
-	  System.Console.WriteLine(i);
+	  cxMath = xMathTocX(xMath);													// Convert math x to C# x
+	  cyMath = yMathTocY(yMath);	
+	  pointer_to_graphic_surface.FillEllipse(Brushes.Red,(cxMath-cRadius),(cyMath -cRadius),(2* cRadius),(2 *cRadius));
+	  System.Console.WriteLine("HEYYYY "+ xMath+" HERE " + yMath);
 	  i++;
      }//End of method Update_the_position_of_the_spiral
    protected void Manage_spiral_clock(Object sender, EventArgs events)
@@ -252,9 +256,7 @@ private const int xframe = 800; //UI X's size
    
 	
 	protected override void OnPaint(PaintEventArgs graph) {
-		Graphics curves = graph.Graphics;							
-		cxMath = xMathTocX(xMath);													// Convert math x to C# x
-		cyMath = yMathTocY(yMath);													// Convert math y to C# y
+		Graphics curves = graph.Graphics;																			// Convert math y to C# y
 		curves.DrawImage(pointer_to_bitmap_in_memory,0,0,xframe,yframe);
 		base.OnPaint(graph);
 		
