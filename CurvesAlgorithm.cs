@@ -22,7 +22,7 @@ public class Curves_algorithms
        {	
 	   derivativeX = (double)(System.Math.Cos(theta)*System.Math.Cos(curvesConstant*theta)*curvesConstant *bigPolarfactor - System.Math.Sin(theta) * System.Math.Sin(curvesConstant*theta)*bigPolarfactor);
 		derivativeY = (double)(System.Math.Cos(theta)*System.Math.Sin(curvesConstant*theta)*bigPolarfactor + curvesConstant*System.Math.Sin(theta)*System.Math.Cos(curvesConstant*theta)*bigPolarfactor);   
-		//erivativeX = (double)(-2*System.Math.Cos(theta)*System.Math.Sin(curvesConstant*theta) - System.Math.Sin(theta)*System.Math.Cos(curvesConstant*theta));
+		//derivativeX = (double)(-2*System.Math.Cos(theta)*System.Math.Sin(curvesConstant*theta) - System.Math.Sin(theta)*System.Math.Cos(curvesConstant*theta));
 		//derivativeY = (double)(System.Math.Cos(theta)*System.Math.Cos(curvesConstant*theta) - curvesConstant*System.Math.Sin(theta)*System.Math.Sin(curvesConstant*theta));
 		// derivativeX = (double) (System.Math.Cos(theta) * System.Math.Cos(theta) - System.Math.Sin(theta) * System.Math.Sin(theta));
 		// derivativeY = (double) (System.Math.Cos(theta) * System.Math.Sin(theta) *2);

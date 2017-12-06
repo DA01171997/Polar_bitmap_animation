@@ -3,7 +3,10 @@
 //Author's email: duy.ado@fullerton.edu
 //Author's Github: https://github.com/DA01171997
 //Project: Curves
-
+//Purpose: Drawing a polargraph of 8 petals flower by equation of r = sin(4theta) using bitmap
+//Last modified: 12/6/2018
+//Source Files in this program: CurvesAlgorithm.cs, Curvesframe.cs, Curvestmain.cs, run.sh
+//Compile and execute program in Bash Shell. Type ./run.sh in to respective directory's terminal. 
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -14,7 +17,6 @@ private const int xframe = 800; //UI X's size
 	private const int yframe = 1000;//UI Y's size
 	private const int pensize = 1;
 	private const int cRadius =2;
-	private double i;
 	private const double refresh_rate = 30.0;//Hertz: How many times per second the display area is repainted.
 	private const double ball_refresh_rate=50.0;
 	private const double restart_clock_rate=1.0;
@@ -25,43 +27,37 @@ private const int xframe = 800; //UI X's size
 	private Pen ballpointpen;
 	private Pen ballpointpenDash;
 	private Font fontStyle = new Font("Arial", 10);
+	private Font endfontStyle = new Font("Arial",25);
 	private SolidBrush drawBrush = new SolidBrush(Color.Black);
 	private Button startB = new System.Windows.Forms.Button();
 	private Button exitB = new System.Windows.Forms.Button();
-	private Point startBL = new Point(530,850);	
+	private Point startBL = new Point(590,850);	
 	private Point exitBL = new Point(650,850);		
 	private Size buttonSize = new Size(60,50);
 	private float speedD = 100;		//initial speed 40pix sec
-	private float degreeD = 0;
-	private float mRadian = 0;
 	private float mathToCRatio=50;
 	private float xMath=0;
 	private float yMath=0;
 	private float cxMath;
 	private float cyMath;
-	private float cSpeedTic;
-	private float mSpeedTic;
-	private float cursor_x = 0; //coordinate of mouse
-	private float cursor_y = 0; //coordinate of mouse
-	private String cCordMessage = "Ball's location = ";
-	private String MathCordMessage = "Points earned = ";
-	private String ballspeedmessage = "Ball's speed = ";
-	private String degreemessage = "Random Degree = ";
+	private String cCordMessage = "Pen location = ";
+	private String ballspeedmessage = "Linear speed= ";
+	private String degreemessage = "Theta = ";
 	private String myName = "Duy Do";
-	
-	private static System.Timers.Timer graphic_area_refresh_clock = new System.Timers.Timer();
-	
+	private String finishedMessage = "The curves is finished. Now it will redraws.";
+	private String finishedMessage2 = "You may exit.";
+	private bool finished = false;
 	//Declare clocks
-	//private static System.Timers.Timer graphic_area_refresh_clock = new System.Timers.Timer();
+	private static System.Timers.Timer graphic_area_refresh_clock = new System.Timers.Timer();
 	private static System.Timers.Timer spiral_clock = new System.Timers.Timer();
 	private enum Spiral_clock_state_type{Begin,Ticking,Paused};
 	private Spiral_clock_state_type spiral_state = Spiral_clock_state_type.Begin;
 	
-	private Pen bic = new Pen(Color.Black,1); 
-		
+	//Declare Bitmap
 	private System.Drawing.Graphics pointer_to_graphic_surface;
 	private System.Drawing.Bitmap pointer_to_bitmap_in_memory = new Bitmap(xframe,yframe,System.Drawing.Imaging.PixelFormat.Format24bppRgb);
 	
+	//Declare Algorithm Varibles
 	Curves_algorithms polarCurves;
 	private double theta=0; 
 	private double distance_1tic;
@@ -90,18 +86,21 @@ private const int xframe = 800; //UI X's size
 		startB.Size = buttonSize;
 		startB.Location = startBL;
 		startB.BackColor = Color.Salmon;
-		startB.TabIndex = 5;
+		startB.TabIndex = 5;		
 		
-		//Add Buttons to frame
-		
+		// Add Buttons to frame
 		Controls.Add(exitB);
 		Controls.Add(startB);
-		// Prepare the refresh clock
-		graphic_area_refresh_clock.Enabled = false;
-		graphic_area_refresh_clock.Elapsed += new ElapsedEventHandler(Update_the_graphic_area);
 		// Add live handlers to UI
 		exitB.Click += new EventHandler(exitBP);
 		startB.Click += new EventHandler(Manage_spiral_clock);
+		
+		// Prepare the refresh clock
+		graphic_area_refresh_clock.Enabled = false;
+		graphic_area_refresh_clock.Elapsed += new ElapsedEventHandler(Update_the_graphic_area);
+		//Prepare the spiral clock
+        spiral_clock.Enabled = false;
+        spiral_clock.Elapsed += new ElapsedEventHandler(Update_the_position_of_the_spiral);
 		
 		//Use extra memory to make a smooth animation.
         DoubleBuffered = true;
@@ -109,33 +108,16 @@ private const int xframe = 800; //UI X's size
 		//Initialize the pointer used to write onto the bitmap stored in memory.
 		pointer_to_graphic_surface = Graphics.FromImage(pointer_to_bitmap_in_memory);
 		initialize_bitmap();
-		//Prepare the spiral clock
-        spiral_clock.Enabled = false;
-        spiral_clock.Elapsed += new ElapsedEventHandler(Update_the_position_of_the_spiral);
-
+		
+		// Define Algorithm variables
 		polarCurves = new Curves_algorithms();
 		distance_1tic = linear_velocity/spiral_rate;
 		mathematical_distance_traveled_in_one_tic = distance_1tic/mathToCRatio;
 		xMath=(float) (System.Math.Sin(curvesConstant*theta)*System.Math.Cos(theta)*bigPolarfactor);
 		yMath=(float) (System.Math.Sin(curvesConstant*theta)*System.Math.Sin(theta)*bigPolarfactor);
-		//xMath=(float) (System.Math.Cos(curvesConstant*theta)*System.Math.Cos(theta));
-		//yMath=(float) (System.Math.Cos(curvesConstant*theta)*System.Math.Sin(theta));
-		//xMath= (float) (System.Math.Sin(theta)* System.Math.Cos(theta));
-		//yMath= (float) (System.Math.Sin(theta)* System.Math.Sin(theta));
-		System.Console.WriteLine("HEYYYY "+ xMath+" HERE " + yMath);
+		//Start refreshing the screen
 		Start_graphic_clock(refresh_rate);
 	}
-	// protected void startBP(Object sender, EventArgs events) {
-	// System.Console.WriteLine("New Game");
-	// // speedD=40;
-	// // resetPosition();
-	// // pointCounter=0;
-	 // 
-	 // spiral_clock.Enabled = true;
-	// // Start_motion_ball_clock(ball_refresh_rate);
-	// Invalidate();
-	// }
-
 
 	protected void exitBP(Object sender, EventArgs events) {
 	System.Console.WriteLine("Exit");
@@ -149,7 +131,8 @@ private const int xframe = 800; //UI X's size
 	   return((xframe/2) - y * mathToCRatio );
 	   
    }
-   protected void Start_graphic_clock(double refreshrate)
+   
+   protected void Start_graphic_clock(double refreshrate)						// Start Graphic Clock method
     {double elapsedtimebetweentics;
     if(refreshrate < 1.0) refreshrate = 1.0;  //Do not allow updates slower than 1 hertz.
     elapsedtimebetweentics = time_converter/refreshrate;  //elapsed time between tics has units milliseconds
@@ -157,9 +140,16 @@ private const int xframe = 800; //UI X's size
     graphic_area_refresh_clock.Enabled = true;  //Start this clock ticking
     System.Console.WriteLine("Method Start_graphic_clock has terminated.");
    }
-    protected void Update_the_graphic_area(System.Object sender, ElapsedEventArgs even)
+    protected void Update_the_graphic_area(System.Object sender, ElapsedEventArgs even)				//Screen refresh method
     {   System.Console.WriteLine("Refreshing Screen");
-			  pointer_to_graphic_surface.FillEllipse(Brushes.Red,(cxMath-cRadius),(cyMath -cRadius),(2* cRadius),(2 *cRadius));
+			  //check to see if the curves if finished drawing
+			  if (theta<2*Math.PI){
+			  pointer_to_graphic_surface.FillEllipse(Brushes.DarkTurquoise,(cxMath-cRadius),(cyMath -cRadius),(2* cRadius),(2 *cRadius));
+			  }
+			  else {
+			  pointer_to_graphic_surface.FillEllipse(Brushes.Blue,(cxMath-cRadius),(cyMath -cRadius),(2* cRadius),(2 *cRadius));
+			  finished=true;	//Curve finished drawing
+			  }
 		Invalidate();
    }
     protected void Update_the_position_of_the_spiral(System.Object sender,ElapsedEventArgs an_event)
@@ -169,15 +159,10 @@ private const int xframe = 800; //UI X's size
                                       ref theta,
                                       out xMath,
                                       out yMath);
-
-      //xMath=;
-      // y_scaled_double = scale_factor * y;
 	  cxMath = xMathTocX(xMath);													// Convert math x to C# x
 	  cyMath = yMathTocY(yMath);	
-
-	  System.Console.WriteLine("HEYYYY "+ xMath+" HERE " + yMath);
-	  System.Console.WriteLine("BLAH "+ cxMath+" HERE " + cyMath);
-	  i++;
+	  System.Console.WriteLine("New X and Y position");
+	  Invalidate();
      }//End of method Update_the_position_of_the_spiral
    protected void Manage_spiral_clock(Object sender, EventArgs events)
    {switch(spiral_state)
@@ -216,23 +201,14 @@ private const int xframe = 800; //UI X's size
    
    
    protected void initialize_bitmap()      {  
-     pointer_to_graphic_surface.Clear(System.Drawing.Color.White);
-   //Draw interface box
+		pointer_to_graphic_surface.Clear(System.Drawing.Color.DeepPink);
+		//Draw interface box
 		pointer_to_graphic_surface.FillRectangle(Brushes.Peru,0, xframe, xframe-1, yframe-1);											
-		pointer_to_graphic_surface.DrawString(myName,fontStyle, drawBrush, 50,50);
-		pointer_to_graphic_surface.DrawString(ballspeedmessage + speedD + " pix/sec", fontStyle, drawBrush, 275,810);
-		pointer_to_graphic_surface.DrawString(cCordMessage+"(" + cxMath + "," + cyMath + ")", fontStyle, drawBrush, 275, 850);
-		pointer_to_graphic_surface.DrawString(degreemessage + degreeD, fontStyle, drawBrush, 275,930);
-		
-		//Draw Elipse and XY Coordinates
-		// if (!destroyed){
-		// Duyball.FillEllipse(elipseBrush,(cxMath-cRadius),(cyMath -cRadius),(2* cRadius),(2 *cRadius));
-		// }
+		//Draw The Axis
 		pointer_to_graphic_surface.DrawLine(ballpointpenDash, 0, xframe/2, xframe/2, xframe/2);
 		pointer_to_graphic_surface.DrawLine(ballpointpenDash, xframe/2,xframe/2, xframe/2, xframe);
 		pointer_to_graphic_surface.DrawLine(ballpointpen, xframe/2, 0, xframe/2, xframe/2);
 		pointer_to_graphic_surface.DrawLine(ballpointpen, xframe/2,xframe/2, xframe, xframe/2);
-		
 		//Initialize XY Coordinates
 		for (int i=1; i<=xframe/2/mathToCRatio; i++){
 		string temp = i.ToString();
@@ -247,23 +223,26 @@ private const int xframe = 800; //UI X's size
 		pointer_to_graphic_surface.DrawLine(ballpointpen, xframe/2-10, xframe/2 - i*mathToCRatio, xframe/2+10, xframe/2-i*mathToCRatio);
 		pointer_to_graphic_surface.DrawLine(ballpointpen, 0 + i*mathToCRatio, xframe/2 - 10, 0 + i*mathToCRatio, xframe/2 + 10);
 		pointer_to_graphic_surface.DrawLine(ballpointpen, xframe/2-10, xframe/2 + i*mathToCRatio, xframe/2+10, xframe/2+i*mathToCRatio);
-		
+		//Draw Elipse Scale
 		pointer_to_graphic_surface.DrawEllipse(ballpointpen, (xframe/2-i*mathToCRatio),(xframe/2-i*mathToCRatio),(2*i*mathToCRatio),(2*i*mathToCRatio));
-		
 		}
-   
-   
-   
-   
    }//End of initialize_bitmap()
 
    
-   
-   
-	
 	protected override void OnPaint(PaintEventArgs graph) {
 		Graphics curves = graph.Graphics;																			// Convert math y to C# y
+		//Draw Bitmap to OnPaint
 		curves.DrawImage(pointer_to_bitmap_in_memory,0,0,xframe,yframe);
+		//Draw String
+		curves.DrawString(myName,fontStyle, drawBrush, 50,50);
+		curves.DrawString(ballspeedmessage + speedD + " pix/sec", fontStyle, drawBrush, 275,810);
+		curves.DrawString(cCordMessage+"(" + cxMath + "," + cyMath + ")", fontStyle, drawBrush, 275, 850);
+		curves.DrawString(degreemessage + theta, fontStyle, drawBrush, 275,890);
+		//Exit message when curves if finished 
+		if (finished) { 
+		curves.DrawString(finishedMessage, endfontStyle, drawBrush, 100 , xframe/4*3);
+		curves.DrawString(finishedMessage2, endfontStyle, drawBrush, xframe*1/3+50, xframe/4*3+25);
+		}
 		base.OnPaint(graph);
 		
 	}
